@@ -42,6 +42,7 @@
 	UIActivityViewController *activityController = nil;
 	activityController = [[UIActivityViewController alloc] initWithActivityItems:@[self.screenshot]
 														   applicationActivities:nil];
+    activityController.popoverPresentationController.barButtonItem = sender;
 	[self presentViewController:activityController animated:YES completion:nil];
 }
 
