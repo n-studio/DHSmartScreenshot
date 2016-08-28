@@ -12,6 +12,8 @@
 
 - (UIImage *)screenshot;
 
+- (NSArray *)screenshotPagesWithAspectRatio:(CGFloat)ratio;
+
 - (UIImage *)screenshotOfCellAtIndexPath:(NSIndexPath *)indexPath;
 
 - (UIImage *)screenshotOfHeaderViewAtSection:(NSUInteger)section;
@@ -25,6 +27,11 @@
 - (UIImage *)screenshotExcludingHeadersAtSections:(NSSet *)headerSections
 					   excludingFootersAtSections:(NSSet *)footerSections
 						excludingRowsAtIndexPaths:(NSSet *)indexPaths;
+
+- (NSArray *)screenshotPagesExcludingHeadersAtSections:(NSSet *)headerSections
+                       excludingFootersAtSections:(NSSet *)footerSections
+                        excludingRowsAtIndexPaths:(NSSet *)indexPaths
+                                        withRatio:(CGFloat)ratio;
 
 - (UIImage *)screenshotOfHeadersAtSections:(NSSet *)headerSections
 						 footersAtSections:(NSSet *)footerSections

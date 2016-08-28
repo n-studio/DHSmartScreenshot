@@ -19,10 +19,10 @@
 {
 	[super viewWillAppear:animated];
 	
-	self.screenshotImageView = [[UIImageView alloc] initWithImage:self.screenshot];
-	[self.screenshotImageView setBackgroundColor:[UIColor whiteColor]];
-	[self.scrollView addSubview:self.screenshotImageView];
-	[self.scrollView setContentSize:self.screenshotImageView.bounds.size];
+    self.screenshotImageView = [[UIImageView alloc] initWithImage:[self.screenshots firstObject]];
+    [self.screenshotImageView setBackgroundColor:[UIColor whiteColor]];
+    [self.scrollView addSubview:self.screenshotImageView];
+    [self.scrollView setContentSize:self.screenshotImageView.bounds.size];
 	[self.scrollView setMinimumZoomScale:1.f];
 	[self.scrollView setMaximumZoomScale:3.f];
 	[self.scrollView setDelegate:self];
@@ -40,7 +40,7 @@
 - (IBAction)shareButtonPressed:(id)sender
 {
 	UIActivityViewController *activityController = nil;
-	activityController = [[UIActivityViewController alloc] initWithActivityItems:@[self.screenshot]
+	activityController = [[UIActivityViewController alloc] initWithActivityItems:self.screenshots
 														   applicationActivities:nil];
     activityController.popoverPresentationController.barButtonItem = sender;
 	[self presentViewController:activityController animated:YES completion:nil];

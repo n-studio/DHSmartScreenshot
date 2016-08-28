@@ -19,6 +19,14 @@
 							excludingRowsAtIndexPaths:nil];
 }
 
+- (NSArray *)screenshotPagesWithAspectRatio:(CGFloat)ratio
+{
+    return [self screenshotPagesExcludingHeadersAtSections:nil
+                                excludingFootersAtSections:nil
+                                 excludingRowsAtIndexPaths:nil
+                                                 withRatio:(CGFloat)ratio];
+}
+
 - (UIImage *)screenshotOfCellAtIndexPath:(NSIndexPath *)indexPath
 {
 	UIImage *cellScreenshot = nil;
@@ -130,6 +138,74 @@
 	UIImage *footerScreenshot = [self screenshotOfFooterView];
 	if (footerScreenshot) [screenshots addObject:footerScreenshot];
 	return [UIImage verticalImageFromArray:screenshots];
+}
+
+- (NSArray *)screenshotPagesExcludingHeadersAtSections:(NSSet *)excludedHeaderSections
+                            excludingFootersAtSections:(NSSet *)excludedFooterSections
+                             excludingRowsAtIndexPaths:(NSSet *)excludedIndexPaths
+                                             withRatio:(CGFloat)ratio
+{
+    NSMutableArray *screenshots = [NSMutableArray array];
+    NSMutableArray *pages = [NSMutableArray array];
+    // Header Screenshot
+    UIImage *headerScreenshot = [self screenshotOfHeaderView];
+    if (headerScreenshot) [screenshots addObject:headerScreenshot];
+    for (int section=0; section<self.numberOfSections; section++) {
+        // Header Screenshot
+        UIImage *headerScreenshot = [self screenshotOfHeaderViewAtSection:section excludedHeaderSections:excludedHeaderSections];
+        if (headerScreenshot) {
+            [screenshots addObject:headerScreenshot];
+            UIImage *image = [UIImage verticalImageFromArray:screenshots];
+            if (image.size.height > image.size.width / ratio) {
+                [pages addObject:[UIImage verticalImageFromArray:[screenshots subarrayWithRange: NSMakeRange(0, [screenshots count] - 1)]]];
+                screenshots = [NSMutableArray array];
+                [screenshots addObject:headerScreenshot];
+            }
+        }
+        
+        // Screenshot of every cell of this section
+        for (int row=0; row<[self numberOfRowsInSection:section]; row++) {
+            NSIndexPath *cellIndexPath = [NSIndexPath indexPathForRow:row inSection:section];
+            UIImage *cellScreenshot = [self screenshotOfCellAtIndexPath:cellIndexPath excludedIndexPaths:excludedIndexPaths];
+            if (cellScreenshot) {
+                [screenshots addObject:cellScreenshot];
+                
+                UIImage *image = [UIImage verticalImageFromArray:screenshots];
+                if (image.size.height > image.size.width / ratio) {
+                    [pages addObject:[UIImage verticalImageFromArray:[screenshots subarrayWithRange: NSMakeRange(0, [screenshots count] - 1)]]];
+                    screenshots = [NSMutableArray array];
+                    [screenshots addObject:cellScreenshot];
+                }
+            }
+        }
+        
+        // Footer Screenshot
+        UIImage *footerScreenshot = [self screenshotOfFooterViewAtSection:section excludedFooterSections:excludedFooterSections];
+        if (footerScreenshot) {
+            [screenshots addObject:footerScreenshot];
+            UIImage *image = [UIImage verticalImageFromArray:screenshots];
+            if (image.size.height > image.size.width / ratio) {
+                [pages addObject:[UIImage verticalImageFromArray:[screenshots subarrayWithRange: NSMakeRange(0, [screenshots count] - 1)]]];
+                screenshots = [NSMutableArray array];
+                [screenshots addObject:footerScreenshot];
+            }
+        }
+    }
+    UIImage *footerScreenshot = [self screenshotOfFooterView];
+    if (footerScreenshot) [screenshots addObject:footerScreenshot];
+    
+    UIImage *image = [UIImage verticalImageFromArray:screenshots];
+    if (image.size.height > image.size.width / ratio) {
+        [pages addObject:[UIImage verticalImageFromArray:[screenshots subarrayWithRange: NSMakeRange(0, [screenshots count] - 1)]]];
+        screenshots = [NSMutableArray array];
+        [screenshots addObject:footerScreenshot];
+        [pages addObject:[UIImage verticalImageFromArray:screenshots]];
+    }
+    else {
+        [pages addObject:[UIImage verticalImageFromArray:screenshots]];
+    }
+    
+    return pages;
 }
 
 - (UIImage *)screenshotOfHeadersAtSections:(NSSet *)includedHeaderSections

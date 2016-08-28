@@ -10,7 +10,7 @@
 
 @interface DHScreenshotViewController : UIViewController
 
-@property (strong, nonatomic) UIImage *screenshot;
+@property (strong, nonatomic) NSArray *screenshots;
 
 - (IBAction)shareButtonPressed:(id)sender;
 
